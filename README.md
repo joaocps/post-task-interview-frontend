@@ -1,4 +1,5 @@
-#FrontEnd to retrieve data from Django API
+# FrontEnd to retrieve data from Django API
+
 ## Available Scripts
 
 In the project directory, you can run:
