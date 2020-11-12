@@ -7,7 +7,7 @@ function PostLoading(Component) {
         if(!isLoading) return <Component {...props} />;
         return(
             <p style={{ fontSize: '25px'}}>
-                Waiting for the data to load!!!!
+                <img src={"https://stackify.com/wp-content/uploads/2018/10/Web-API-Error-Handling2-1024x512.jpg"} alt="Logo" />
             </p>
         );
     };
