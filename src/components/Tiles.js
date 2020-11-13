@@ -200,7 +200,8 @@ const Tiles = (props) => {
                                             {/*{tile.status}*/}
                                         </Typography>
                                         <div className={classes.postText}>
-                                            <AutoRotatingCarouselModal tasks={tileTasks}/>
+                                            <AutoRotatingCarouselModal tasks={tileTasks} tile={tile}
+                                                                       getTilesAndTasks={getTilesAndTasks}/>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -213,11 +214,16 @@ const Tiles = (props) => {
     );
 };
 
-const AutoRotatingCarouselModal = ({tasks}) => {
+const AutoRotatingCarouselModal = (props) => {
+    const {tasks, tile, getTilesAndTasks} = props;
     const [handleOpen, setHandleOpen] = useState({open: false});
     const [handleAlertOpen, setHandleAlertOpen] = useState({open: false});
     const [open, setOpen] = useState(false);
     const [taskType, setTaskType] = useState('Discussion');
+    const [title, setTitle] = useState();
+    const [order, setOrder] = useState();
+    const [description, setDescription] = useState();
+
 
     const taskTypes = [
         {
@@ -242,9 +248,42 @@ const AutoRotatingCarouselModal = ({tasks}) => {
         setOpen(false);
     };
 
-    const handleChange = (event) => {
+    const handleTypeChange = (event) => {
         setTaskType(event.target.value);
     };
+
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value);
+    };
+    const handleOrderChange = (event) => {
+        setOrder(event.target.value);
+    };
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value);
+    };
+
+    function createTask(tile_id, title, order, description, task_type) {
+        let body = {
+            "tile": tile_id,
+            "title": title,
+            "order": order,
+            "description": description,
+            "task_type": task_type
+        };
+        fetch(API_URL + "/task/", {
+            method: "post",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    alert("Error creating task!")
+                    throw new Error('error creating tile')
+                }
+                return getTilesAndTasks();
+            })
+            .catch((error) => console.error(error));
+    }
 
     return (
         <div>
@@ -254,6 +293,7 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                     // tasks.length === 0 ? setHandleAlertOpen({open: true}) : setHandleOpen({open: true})
                     // tasks.length === 0 ? alert("No Tasks Available") : setHandleOpen({open: true}) -> DEAL WITH NO TASKS
                     setHandleOpen({open: true})
+                    console.log(tasks)
                 }}
             >
                 View Tasks
@@ -273,7 +313,7 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                     {tasks.map((task) => {
                         return (
                             <Slide
-                                key={task.order}
+                                key={task.tile}
                                 media={
                                     <img src="https://source.unsplash.com/random" alt="rdm"/>
                                 }
@@ -316,6 +356,7 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                                             id="title"
                                             label="Title"
                                             type="task_title"
+                                            onChange={handleTitleChange}
                                             fullWidth
                                         />
                                         <TextField
@@ -324,6 +365,7 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                                             id="order"
                                             label="Order"
                                             type="task_order"
+                                            onChange={handleOrderChange}
                                             fullWidth
                                         />
                                         <TextField
@@ -332,6 +374,7 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                                             id="description"
                                             label="Description"
                                             type="task_description"
+                                            onChange={handleDescriptionChange}
                                             fullWidth
                                         />
                                         <TextField
@@ -339,7 +382,7 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                                             select
                                             label=" "
                                             value={taskType}
-                                            onChange={handleChange}
+                                            onChange={handleTypeChange}
                                             helperText="Please select the task type."
                                         >
                                             {taskTypes.map((option) => (
@@ -353,14 +396,17 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                                         <Button onClick={handleClose} color="primary">
                                             Cancel
                                         </Button>
-                                        <Button onClick={handleClose} color="primary">
+                                        <Button onClick={() => {
+                                            handleClose();
+                                            createTask(tile.id, title, order, description, taskType)
+                                            // createTask("body")
+                                        }} color="primary">
                                             Add new task
                                         </Button>
                                     </DialogActions>
                                 </Dialog>
                             </div>}
                         // subtitle={<Button variant={"contained"} size={"large"} onClick={() => {FormDialog()}}>Create Task</Button>}
-
                     >
                     </Slide>
                 </AutoRotatingCarousel>
