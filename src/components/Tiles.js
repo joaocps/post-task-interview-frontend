@@ -137,7 +137,7 @@ const Tiles = (props) => {
                 <Grid container spacing={5} alignItems="flex-end">
                     {filteredTiles.map((tile) => {
                         const tileTasks = tasks.filter((task) => {
-                            return tile.id === task.tile
+                            return tile.id === task.tile;
                         });
                         return (
                             // Enterprise card is full width at sm breakpoint
@@ -149,6 +149,7 @@ const Tiles = (props) => {
                                         avatar={
                                             <Avatar aria-label="CardType" className={classes.avatar}>
                                                 {tileTasks.length}
+                                                {tile.id}
                                             </Avatar>
                                         }
                                         action={
@@ -167,6 +168,7 @@ const Tiles = (props) => {
                                                     <MenuItem onClick={() => {
                                                         handleClose();
                                                         editTile(tile, "Live");
+                                                        console.log(tile.id)
                                                     }}>Set Live</MenuItem>
                                                     <MenuItem onClick={() => {
                                                         handleClose();
