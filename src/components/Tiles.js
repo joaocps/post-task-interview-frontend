@@ -68,19 +68,6 @@ const Tiles = (props) => {
 
     const filteredTiles = filter === "all" ? tiles : tiles.filter((tile) => tile.status === filter);
 
-    function renderSwitch(param) {
-        switch (param) {
-            case 'Live':
-                return '#9ccc65';
-            case 'Archived':
-                return '#e57373';
-            case 'Pending':
-                return '#fff176';
-            default:
-                return 'green';
-        }
-    }
-
     // const [filter, setFilter] = useState('All Tiles');
 
     const handleChange = (event) => {
@@ -140,75 +127,16 @@ const Tiles = (props) => {
                             return tile.id === task.tile;
                         });
                         return (
-                            // Enterprise card is full width at sm breakpoint
-                            <Grid item key={tile.launch_date} xs={12} md={4}>
-                                <Card className={classes.card}>
-                                    <CardHeader
-
-                                        style={{backgroundColor: renderSwitch(tile.status)}}
-                                        avatar={
-                                            <Avatar aria-label="CardType" className={classes.avatar}>
-                                                {tileTasks.length}
-                                                {tile.id}
-                                            </Avatar>
-                                        }
-                                        action={
-                                            <div>
-                                                <Button aria-controls="simple-menu" aria-haspopup="true"
-                                                        onClick={handleClick}>
-                                                    <MoreVertIcon/>
-                                                </Button>
-                                                <Menu
-                                                    id="change-tile"
-                                                    anchorEl={anchorEl}
-                                                    keepMounted
-                                                    open={Boolean(anchorEl)}
-                                                    onClose={handleClose}
-                                                >
-                                                    <MenuItem onClick={() => {
-                                                        handleClose();
-                                                        editTile(tile, "Live");
-                                                        console.log(tile.id)
-                                                    }}>Set Live</MenuItem>
-                                                    <MenuItem onClick={() => {
-                                                        handleClose();
-                                                        editTile(tile, "Pending")
-                                                    }}>Set Pending</MenuItem>
-                                                    <MenuItem onClick={() => {
-                                                        handleClose();
-                                                        editTile(tile, "Archived")
-                                                    }}>Set Archived</MenuItem>
-                                                    <MenuItem onClick={() => {
-                                                        handleClose();
-                                                        editTile(tile, "Live")
-                                                    }}>Delete Tile</MenuItem>
-                                                </Menu>
-                                            </div>
-                                        }
-                                        title={tile.status}
-                                        subheader={tile.launch_date.split("T")[0]}
-                                    />
-                                    <CardMedia
-                                        className={classes.cardMedia}
-                                        image="https://source.unsplash.com/random"
-                                        title="Image title"
-                                    />
-                                    <CardContent className={classes.cardContent}>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h6"
-                                            component="h2"
-                                            className={classes.postTitle}
-                                        >
-                                            {/*{tile.status}*/}
-                                        </Typography>
-                                        <div className={classes.postText}>
-                                            <AutoRotatingCarouselModal tasks={tileTasks} tile={tile}
-                                                                       getTilesAndTasks={getTilesAndTasks}/>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
+                            <GridItem
+                                tile={tile}
+                                editTile={editTile}
+                                handleClick={handleClick}
+                                handleClose={handleClose}
+                                classes={classes}
+                                anchorEl={anchorEl}
+                                tileTasks={tileTasks}
+                                getTilesAndTasks={getTilesAndTasks}
+                            />
                         );
                     })}
                 </Grid>
@@ -216,6 +144,123 @@ const Tiles = (props) => {
         </React.Fragment>
     );
 };
+
+const GridItem = ({
+                      tile,
+                      editTile,
+                      handleClick,
+                      handleClose,
+                      classes,
+                      anchorEl,
+                      tileTasks,
+                      getTilesAndTasks,
+                  }) => {
+
+    function renderSwitch(param) {
+        switch (param) {
+            case 'Live':
+                return '#9ccc65';
+            case 'Archived':
+                return '#e57373';
+            case 'Pending':
+                return '#fff176';
+            default:
+                return 'green';
+        }
+    }
+
+    return (
+        // Enterprise card is full width at sm breakpoint
+        <Grid item key={tile.launch_date} xs={12} md={4}>
+            <Card className={classes.card}>
+                <CardHeader
+                    style={{backgroundColor: renderSwitch(tile.status)}}
+                    avatar={
+                        <Avatar aria-label="CardType" className={classes.avatar}>
+                            {tileTasks.length}
+                        </Avatar>
+                    }
+                    action={
+                        <div>
+                            <Button
+                                aria-controls="simple-menu"
+                                aria-haspopup="true"
+                                onClick={handleClick}
+                            >
+                                <MoreVertIcon/>
+                            </Button>
+                            <Menu
+                                id="change-tile"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        handleClose();
+                                        editTile(tile, "Live");
+                                    }}
+                                >
+                                    Set Live
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        handleClose();
+                                        editTile(tile, "Pending");
+                                    }}
+                                >
+                                    Set Pending
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        handleClose();
+                                        editTile(tile, "Archived");
+                                    }}
+                                >
+                                    Set Archived
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        handleClose();
+                                        editTile(tile, "Live");
+                                    }}
+                                >
+                                    Delete Tile
+                                </MenuItem>
+                            </Menu>
+                        </div>
+                    }
+                    title={tile.status}
+                    subheader={tile.launch_date.split("T")[0]}
+                />
+                <CardMedia
+                    className={classes.cardMedia}
+                    image="https://source.unsplash.com/random"
+                    title="Image title"
+                />
+                <CardContent className={classes.cardContent}>
+                    <Typography
+                        gutterBottom
+                        variant="h6"
+                        component="h2"
+                        className={classes.postTitle}
+                    >
+                        {/*{tile.status}*/}
+                    </Typography>
+                    <div className={classes.postText}>
+                        <AutoRotatingCarouselModal
+                            tasks={tileTasks}
+                            tile={tile}
+                            getTilesAndTasks={getTilesAndTasks}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+        </Grid>
+    );
+};
+
 
 const AutoRotatingCarouselModal = (props) => {
     const {tasks, tile, getTilesAndTasks} = props;
@@ -286,6 +331,7 @@ const AutoRotatingCarouselModal = (props) => {
             })
             .catch((error) => console.error(error));
     }
+
     function deleteTask(task_id) {
         fetch(API_URL + "/task/" + task_id + "/", {
             method: "delete",
@@ -344,7 +390,9 @@ const AutoRotatingCarouselModal = (props) => {
                                 title={
                                     <div>
                                         {task.title}
-                                        <Button onClick={() => {deleteTask(task.id)}}><DeleteIcon style={{fill: "white"}}/></Button>
+                                        <Button onClick={() => {
+                                            deleteTask(task.id)
+                                        }}><DeleteIcon style={{fill: "white"}}/></Button>
                                     </div>}
                                 subtitle={<div><p>{task.task_type}</p><p>{task.description}</p></div>}
 
