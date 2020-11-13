@@ -19,8 +19,18 @@ import Select from '@material-ui/core/Select';
 import Button from "@material-ui/core/Button";
 import {red, blue, green} from "@material-ui/core/colors";
 import {AutoRotatingCarousel, Slide} from "material-auto-rotating-carousel";
-import DialogSelect from "./TileEditRemove";
 import Menu from '@material-ui/core/Menu';
+import {keys} from "@material-ui/core/styles/createBreakpoints";
+import Modal from '@material-ui/core/Modal';
+
+import DialogSelect from "./TileEditRemove";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import TextField from "@material-ui/core/TextField";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const API_URL = `http://127.0.0.1:8000`;
 
@@ -85,7 +95,6 @@ const Tiles = (props) => {
     };
 
     function editTile(tile, state) {
-        console.log(tile)
         let body = {
             "id": tile.id,
             "launch_date": tile.launch_date,
@@ -156,7 +165,7 @@ const Tiles = (props) => {
                                                 >
                                                     <MenuItem onClick={() => {
                                                         handleClose();
-                                                        editTile(tile, "Live")
+                                                        editTile(tile, "Live");
                                                     }}>Set Live</MenuItem>
                                                     <MenuItem onClick={() => {
                                                         handleClose();
@@ -207,6 +216,35 @@ const Tiles = (props) => {
 const AutoRotatingCarouselModal = ({tasks}) => {
     const [handleOpen, setHandleOpen] = useState({open: false});
     const [handleAlertOpen, setHandleAlertOpen] = useState({open: false});
+    const [open, setOpen] = useState(false);
+    const [taskType, setTaskType] = useState('Discussion');
+
+    const taskTypes = [
+        {
+            value: 'Discussion',
+            label: 'Discussion',
+        },
+        {
+            value: 'Diary',
+            label: 'Diary',
+        },
+        {
+            value: 'Survey',
+            label: 'Survey',
+        },
+    ];
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleChange = (event) => {
+        setTaskType(event.target.value);
+    };
 
     return (
         <div>
@@ -214,7 +252,8 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                 style={{backgroundColor: "aliceblue", textAlign: "center"}}
                 onClick={() => {
                     // tasks.length === 0 ? setHandleAlertOpen({open: true}) : setHandleOpen({open: true})
-                    tasks.length === 0 ? alert("No Tasks Available") : setHandleOpen({open: true})
+                    // tasks.length === 0 ? alert("No Tasks Available") : setHandleOpen({open: true}) -> DEAL WITH NO TASKS
+                    setHandleOpen({open: true})
                 }}
             >
                 View Tasks
@@ -251,8 +290,79 @@ const AutoRotatingCarouselModal = ({tasks}) => {
                                 title={task.title + " " + task.order}
                                 subtitle={<div><p>{task.task_type}</p><p>{task.description}</p></div>}
                             />
-                        );
+                        )
                     })}
+                    <Slide
+                        media={
+                            <img src="https://source.unsplash.com/random" alt="rdm"/>
+                        }
+                        mediaBackgroundStyle={{backgroundColor: blue[300]}}
+                        style={{backgroundColor: blue[400]}}
+                        subtitle={
+                            <div>
+                                <Button variant="contained" color="primary" onClick={handleClickOpen}>
+                                    Create Task
+                                </Button>
+
+                                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                                    <DialogTitle id="form-dialog-title">Add Task</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            Please enter all parameters to create a new task.
+                                        </DialogContentText>
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            id="title"
+                                            label="Title"
+                                            type="task_title"
+                                            fullWidth
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            id="order"
+                                            label="Order"
+                                            type="task_order"
+                                            fullWidth
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            id="description"
+                                            label="Description"
+                                            type="task_description"
+                                            fullWidth
+                                        />
+                                        <TextField
+                                            id="standard-select-type"
+                                            select
+                                            label=" "
+                                            value={taskType}
+                                            onChange={handleChange}
+                                            helperText="Please select the task type."
+                                        >
+                                            {taskTypes.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleClose} color="primary">
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={handleClose} color="primary">
+                                            Add new task
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </div>}
+                        // subtitle={<Button variant={"contained"} size={"large"} onClick={() => {FormDialog()}}>Create Task</Button>}
+
+                    >
+                    </Slide>
                 </AutoRotatingCarousel>
             </div>
         </div>
