@@ -109,7 +109,7 @@ function App() {
                 Current Tiles <IconButton onClick={() => createTile({"status": "Pending"})} aria-label="add"><AddIcon/></IconButton>
             </h1>
 
-            <PostLoading isLoading={appState.loading} tiles={appState.tiles} tasks={appState.tasks}/>
+            <PostLoading isLoading={appState.loading} tiles={appState.tiles} tasks={appState.tasks} getTilesAndTasks={getTilesAndTasks}/>
         </div>
     );
 }

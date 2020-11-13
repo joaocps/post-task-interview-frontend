@@ -20,7 +20,9 @@ import Button from "@material-ui/core/Button";
 import {red, blue, green} from "@material-ui/core/colors";
 import {AutoRotatingCarousel, Slide} from "material-auto-rotating-carousel";
 import DialogSelect from "./TileEditRemove";
+import Menu from '@material-ui/core/Menu';
 
+const API_URL = `http://127.0.0.1:8000`;
 
 const useStyles = makeStyles((theme) => ({
     cardMedia: {
@@ -47,10 +49,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Tiles = (props) => {
-    const {tiles, tasks} = props;
+    const {tiles, tasks, getTilesAndTasks} = props;
     const classes = useStyles();
     // const [filter, setFilter] = useState("all");
     const [filter, setFilter] = useState('all');
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const filteredTiles = filter === "all" ? tiles : tiles.filter((tile) => tile.status === filter);
 
@@ -72,6 +75,35 @@ const Tiles = (props) => {
     const handleChange = (event) => {
         setFilter(event.target.value);
     };
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    function editTile(tile, state) {
+        console.log(tile)
+        let body = {
+            "id": tile.id,
+            "launch_date": tile.launch_date,
+            "status": state
+        };
+        fetch(API_URL + "/tile/" + tile.id + "/", {
+            method: "put",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error('error creating tile')
+                }
+                return getTilesAndTasks();
+            })
+            .catch((error) => console.error(error));
+    }
 
     if (!tiles || tiles.length === 0) return <p>Can not find any tiles, sorry !</p>;
     return (
@@ -110,19 +142,36 @@ const Tiles = (props) => {
                                             </Avatar>
                                         }
                                         action={
-                                            // <IconButton onClick={() => this.createTask({"status": "Pending"})}
-                                            //             aria-label="settings">
-                                            //     <MoreVertIcon />
-                                            // </IconButton>
-                                            <IconButton onClick={() => DialogSelect()}
-                                                        aria-label="settings">
-                                                <MoreVertIcon/>
-                                            </IconButton>
-                                            // <Button aria-controls="simple-menu" aria-haspopup="true"
-                                            //         onClick={DialogSelect}>
-                                            //     <MoreVertIcon/>
-                                            // </Button>
-                                            // <IconButton onClick={() => {DialogSelect()}} aria-label="add"><AddIcon/></IconButton>
+                                            <div>
+                                                <Button aria-controls="simple-menu" aria-haspopup="true"
+                                                        onClick={handleClick}>
+                                                    <MoreVertIcon/>
+                                                </Button>
+                                                <Menu
+                                                    id="change-tile"
+                                                    anchorEl={anchorEl}
+                                                    keepMounted
+                                                    open={Boolean(anchorEl)}
+                                                    onClose={handleClose}
+                                                >
+                                                    <MenuItem onClick={() => {
+                                                        handleClose();
+                                                        editTile(tile, "Live")
+                                                    }}>Set Live</MenuItem>
+                                                    <MenuItem onClick={() => {
+                                                        handleClose();
+                                                        editTile(tile, "Pending")
+                                                    }}>Set Pending</MenuItem>
+                                                    <MenuItem onClick={() => {
+                                                        handleClose();
+                                                        editTile(tile, "Archived")
+                                                    }}>Set Archived</MenuItem>
+                                                    <MenuItem onClick={() => {
+                                                        handleClose();
+                                                        editTile(tile, "Live")
+                                                    }}>Delete Tile</MenuItem>
+                                                </Menu>
+                                            </div>
                                         }
                                         title={tile.status}
                                         subheader={tile.launch_date.split("T")[0]}
@@ -164,12 +213,13 @@ const AutoRotatingCarouselModal = ({tasks}) => {
             <Button
                 style={{backgroundColor: "aliceblue", textAlign: "center"}}
                 onClick={() => {
-                    tasks.length === 0 ? setHandleAlertOpen({open: true}) : setHandleOpen({open: true})
+                    // tasks.length === 0 ? setHandleAlertOpen({open: true}) : setHandleOpen({open: true})
+                    tasks.length === 0 ? alert("No Tasks Available") : setHandleOpen({open: true})
                 }}
             >
                 View Tasks
             </Button>
-            {handleAlertOpen.open && <Alert severity="error">No tasks</Alert>}
+            {/*{handleAlertOpen.open && <Alert severity="info">No tasks Available</Alert>}*/}
             <div className={"task"}>
                 <AutoRotatingCarousel
                     label="Close"
