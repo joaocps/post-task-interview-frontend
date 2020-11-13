@@ -22,6 +22,7 @@ import {AutoRotatingCarousel, Slide} from "material-auto-rotating-carousel";
 import Menu from '@material-ui/core/Menu';
 import {keys} from "@material-ui/core/styles/createBreakpoints";
 import Modal from '@material-ui/core/Modal';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import DialogSelect from "./TileEditRemove";
 
@@ -224,7 +225,6 @@ const AutoRotatingCarouselModal = (props) => {
     const [order, setOrder] = useState();
     const [description, setDescription] = useState();
 
-
     const taskTypes = [
         {
             value: 'Discussion',
@@ -277,7 +277,21 @@ const AutoRotatingCarouselModal = (props) => {
         })
             .then((res) => {
                 if (!res.ok) {
-                    alert("Error creating task!")
+                    alert("Error creating task!");
+                    throw new Error('error creating tile')
+                }
+                return getTilesAndTasks();
+            })
+            .catch((error) => console.error(error));
+    }
+    function deleteTask(task_id) {
+        fetch(API_URL + "/task/" + task_id + "/", {
+            method: "delete",
+            headers: {'Content-Type': 'application/json'},
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    alert("Error deleting task");
                     throw new Error('error creating tile')
                 }
                 return getTilesAndTasks();
@@ -293,12 +307,10 @@ const AutoRotatingCarouselModal = (props) => {
                     // tasks.length === 0 ? setHandleAlertOpen({open: true}) : setHandleOpen({open: true})
                     // tasks.length === 0 ? alert("No Tasks Available") : setHandleOpen({open: true}) -> DEAL WITH NO TASKS
                     setHandleOpen({open: true})
-                    console.log(tasks)
                 }}
             >
                 View Tasks
             </Button>
-            {/*{handleAlertOpen.open && <Alert severity="info">No tasks Available</Alert>}*/}
             <div className={"task"}>
                 <AutoRotatingCarousel
                     label="Close"
@@ -327,9 +339,16 @@ const AutoRotatingCarouselModal = (props) => {
                                         ? {backgroundColor: red[400]}
                                         : {backgroundColor: blue[400]}
                                 }
-                                title={task.title + " " + task.order}
+                                title={
+                                    <div>
+                                        {task.title}
+                                        <Button onClick={() => {deleteTask(task.id)}}><DeleteIcon style={{fill: "white"}}/></Button>
+                                    </div>}
                                 subtitle={<div><p>{task.task_type}</p><p>{task.description}</p></div>}
+
+
                             />
+
                         )
                     })}
                     <Slide
@@ -338,6 +357,7 @@ const AutoRotatingCarouselModal = (props) => {
                         }
                         mediaBackgroundStyle={{backgroundColor: blue[300]}}
                         style={{backgroundColor: blue[400]}}
+                        title=" "
                         subtitle={
                             <div>
                                 <Button variant="contained" color="primary" onClick={handleClickOpen}>
