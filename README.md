@@ -1,4 +1,10 @@
 # FrontEnd to retrieve data from Django API
+* Create / Edit / Remove tiles.
+* Create / Edit / Remove tasks within tiles.
+* Tiles filterable by their status and ordered by their launch dates.
+* Tasks within the tiles ordered by their order field.
+
+![frontPage](https://github.com/joaocps/post-task-interview-frontend/blob/main/frontpage.png)
 
 ## Available Scripts
 
