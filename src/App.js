@@ -4,7 +4,6 @@ import Tiles from './components/Tiles';
 import PostLoadingComponent from './components/TileDataLoading';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 const API_URL = `http://127.0.0.1:8000`;
 

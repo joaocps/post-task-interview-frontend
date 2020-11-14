@@ -6,13 +6,9 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Avatar from '@material-ui/core/Avatar';
 import CardHeader from '@material-ui/core/CardHeader';
-import AddIcon from '@material-ui/icons/Add';
-import Alert from '@material-ui/lab/Alert';
-import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -20,14 +16,8 @@ import Button from "@material-ui/core/Button";
 import {red, blue, green} from "@material-ui/core/colors";
 import {AutoRotatingCarousel, Slide} from "material-auto-rotating-carousel";
 import Menu from '@material-ui/core/Menu';
-import {keys} from "@material-ui/core/styles/createBreakpoints";
-import Modal from '@material-ui/core/Modal';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import EditIcon from '@material-ui/icons/Edit';
-
-import DialogSelect from "./TileEditRemove";
-
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -267,9 +257,6 @@ const GridItem = ({
                     </CardContent>
                 </Card>
             </Grid>
-            {/*<button onClick={() => {*/}
-            {/*    editTile(tile, "Pending")*/}
-            {/*}}>Button</button>*/}
         </>
     );
 };
@@ -278,7 +265,6 @@ const GridItem = ({
 const AutoRotatingCarouselModal = (props) => {
     const {tasks, tile, getTilesAndTasks} = props;
     const [handleOpen, setHandleOpen] = useState({open: false});
-    const [handleAlertOpen, setHandleAlertOpen] = useState({open: false});
     const [open, setOpen] = useState(false);
     const [taskType, setTaskType] = useState('Discussion');
     const [title, setTitle] = useState();
