@@ -13,7 +13,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Button from "@material-ui/core/Button";
-import {red, blue, green} from "@material-ui/core/colors";
+import {red, blue} from "@material-ui/core/colors";
 import {AutoRotatingCarousel, Slide} from "material-auto-rotating-carousel";
 import Menu from '@material-ui/core/Menu';
 import DeleteIcon from '@material-ui/icons/Delete';

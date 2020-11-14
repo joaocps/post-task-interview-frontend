@@ -25,7 +25,7 @@ function Header() {
 			>
 				<Toolbar>
 					<Typography variant="h6" color="inherit" noWrap>
-						<img src="https://incling.com/e079fb7bd4ffb8d0fea4b42ceb0641ff.png" height={460} width={740}/>
+						<img src="https://incling.com/e079fb7bd4ffb8d0fea4b42ceb0641ff.png" height={460} width={740} alt={"Fail to load"}/>
 					</Typography>
 				</Toolbar>
 			</AppBar>
