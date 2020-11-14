@@ -31,21 +31,6 @@ function App() {
             .catch((error) => console.error(error));
     }
 
-    function editTask(id_pk, body) {
-        fetch(API_URL + "/task/" + id_pk, {
-            method: "put",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        })
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error('error creating tile')
-                }
-                return getTilesAndTasks();
-            })
-            .catch((error) => console.error(error));
-    }
-
     function getTilesAndTasks() {
         fetch(API_URL + "/tile/")
             .then((data) => data.json())

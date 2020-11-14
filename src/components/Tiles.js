@@ -24,6 +24,7 @@ import {keys} from "@material-ui/core/styles/createBreakpoints";
 import Modal from '@material-ui/core/Modal';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import EditIcon from '@material-ui/icons/Edit';
 
 import DialogSelect from "./TileEditRemove";
 
@@ -321,6 +322,12 @@ const AutoRotatingCarouselModal = (props) => {
         setDescription(event.target.value);
     };
 
+    function setDefaultValues(title, order, description) {
+        setTitle(title);
+        setOrder(order);
+        setDescription(description);
+    }
+
     function createTask(tile_id, title, order, description, task_type) {
         let body = {
             "tile": tile_id,
@@ -338,6 +345,31 @@ const AutoRotatingCarouselModal = (props) => {
                 if (!res.ok) {
                     alert("Error creating task!");
                     throw new Error('error creating tile')
+                }
+                return getTilesAndTasks();
+            })
+            .catch((error) => console.error(error));
+    }
+
+    function editTask(task_id, tile_id, title, order, description, task_type) {
+        let body = {
+            "id": task_id,
+            "tile": tile_id,
+            "title": title,
+            "order": order,
+            "description": description,
+            "task_type": task_type
+        };
+        console.log(body)
+        fetch(API_URL + "/task/" + task_id + "/", {
+            method: "put",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    alert("Error editing task");
+                    throw new Error('error editing task')
                 }
                 return getTilesAndTasks();
             })
@@ -364,8 +396,6 @@ const AutoRotatingCarouselModal = (props) => {
             <Button
                 style={{backgroundColor: "aliceblue", textAlign: "center"}}
                 onClick={() => {
-                    // tasks.length === 0 ? setHandleAlertOpen({open: true}) : setHandleOpen({open: true})
-                    // tasks.length === 0 ? alert("No Tasks Available") : setHandleOpen({open: true}) -> DEAL WITH NO TASKS
                     setHandleOpen({open: true})
                 }}
             >
@@ -402,9 +432,77 @@ const AutoRotatingCarouselModal = (props) => {
                                 title={
                                     <div>
                                         {task.title}
-                                        <Button onClick={() => {
+                                        <Button size={"small"} color="primary" onClick={ () => {handleClickOpen(); setDefaultValues(task.title, task.order, task.description)}}>
+                                            <EditIcon style={{fill: "white"}}/>
+                                        </Button>
+
+                                        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                                            <DialogTitle id="form-dialog-title">Edit Task</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    Please edit the parameters you need to update the task.
+                                                </DialogContentText>
+                                                <TextField
+                                                    autoFocus
+                                                    margin="dense"
+                                                    id="title"
+                                                    label="Title"
+                                                    type="task_title"
+                                                    onChange={handleTitleChange}
+                                                    defaultValue={task.title}
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    autoFocus
+                                                    margin="dense"
+                                                    id="order"
+                                                    label="Order"
+                                                    type="task_order"
+                                                    onChange={handleOrderChange}
+                                                    defaultValue={task.order}
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    autoFocus
+                                                    margin="dense"
+                                                    id="description"
+                                                    label="Description"
+                                                    type="task_description"
+                                                    onChange={handleDescriptionChange}
+                                                    defaultValue={task.description}
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    id="standard-select-type"
+                                                    select
+                                                    label=" "
+                                                    value={taskType}
+                                                    onChange={handleTypeChange}
+                                                    defaultValue={task.task_type}
+                                                    helperText="Please select the task type."
+                                                >
+                                                    {taskTypes.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))}
+                                                </TextField>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="primary">
+                                                    Cancel
+                                                </Button>
+                                                <Button onClick={() => {
+                                                    handleClose();
+                                                    editTask(task.id, tile.id, title, order, description, taskType)
+                                                }} color="primary">
+                                                    Update Task
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                        <Button size={"small"} onClick={() => {
                                             deleteTask(task.id)
-                                        }}><DeleteIcon style={{fill: "white"}}/></Button>
+                                        }}><DeleteIcon style={{fill: "white", marginLeft: -40}}/></Button>
                                     </div>}
                                 subtitle={<div><p>{task.task_type}</p><p>{task.description}</p></div>}
 
